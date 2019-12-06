@@ -3,7 +3,7 @@
 # LICENSE: Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 #
 # Instructions:
-# Download build script: wget https://raw.githubusercontent.com/linux-on-ibm-z/scripts/master/CFSSL/1.3.4/build_cfssl.sh
+# Download build script: wget https://raw.githubusercontent.com/linux-on-ibm-z/scripts/master/CFSSL/1.4.1/build_cfssl.sh
 # Execute build script: bash build_cfssl.sh    (provide -h for help)
 
 set -e -o pipefail
