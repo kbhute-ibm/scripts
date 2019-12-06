@@ -89,7 +89,7 @@ function configureAndInstall() {
 	go get -u github.com/cloudflare/cfssl/cmd/cfssl
 	go get -u github.com/cloudflare/cfssl/cmd/cfssljson
 	cd $GOPATH/src/github.com/cloudflare/cfssl
-	git checkout $PACKAGE_VERSION
+	git checkout "v${PACKAGE_VERSION}"
 	
 	printf -- 'CFSSL installed successfully. \n'
 	printf -- "The tools will be installed in $GOPATH/bin."
