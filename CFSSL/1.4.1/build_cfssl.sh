@@ -13,7 +13,7 @@ PACKAGE_VERSION="1.4.1"
 SOURCE_ROOT="$(pwd)"
 
 GO_DEFAULT="$HOME/go"
-PATCH_URL="https://raw.githubusercontent.com/linux-on-ibm-z/scripts/master/CFSSL/1.4.1/patch/"
+PATCH_URL="https://raw.githubusercontent.com/kbhute-ibm/scripts/master/CFSSL/1.4.1/patch/"
 FORCE="false"
 LOG_FILE="$SOURCE_ROOT/logs/${PACKAGE_NAME}-${PACKAGE_VERSION}-$(date +"%F-%T").log"
 
