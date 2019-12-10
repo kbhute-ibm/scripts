@@ -13,7 +13,7 @@ PACKAGE_VERSION="1.4.1"
 SOURCE_ROOT="$(pwd)"
 
 GO_DEFAULT="$HOME/go"
-
+PATCH_URL="https://raw.githubusercontent.com/linux-on-ibm-z/scripts/master/CFSSL/1.4.1/patch/"
 FORCE="false"
 LOG_FILE="$SOURCE_ROOT/logs/${PACKAGE_NAME}-${PACKAGE_VERSION}-$(date +"%F-%T").log"
 
@@ -74,7 +74,7 @@ function install_go() {
 	
 	printf -- "\n Installing go \n" |& tee -a "$LOG_FILE"    
 	cd $SOURCE_ROOT
-	wget "https://raw.githubusercontent.com/linux-on-ibm-z/scripts/master/Go/1.13/build_go.sh" |& tee -a "$LOG_FILE" 
+	wget "https://raw.githubusercontent.com/kbhute-ibm/scripts/master/Go/1.13/build_go.sh" |& tee -a "$LOG_FILE" 
     	chmod +x build_go.sh
     	bash build_go.sh -v 1.12.7 |& tee -a "$LOG_FILE"
 
@@ -103,6 +103,11 @@ function runTest() {
 	if [[ "$TESTS" == "true" ]]; then
 		printf -- "\nTEST Flag is set, continue with running test \n"
 		cd $GOPATH/src/github.com/cloudflare/cfssl
+		go get -u golang.org/x/lint/golint
+		export GO111MODULE=on
+		
+		curl -o test.sh.patch $PATCH_URL/test.sh.patch
+		git apply test.sh.patch
 		./test.sh
         	printf -- "Tests completed. \n" 
 	fi
@@ -160,7 +165,7 @@ prepare #Check Prequisites
 DISTRO="$ID-$VERSION_ID"
 
 case "$DISTRO" in
-"ubuntu-16.04" | "ubuntu-18.04" | "ubuntu-19.04")
+"ubuntu-16.04" | "ubuntu-18.04" | "ubuntu-19.10")
     	printf -- "Installing %s %s for %s \n" "$PACKAGE_NAME" "$PACKAGE_VERSION" "$DISTRO" |& tee -a "$LOG_FILE"
     	printf -- "Installing dependencies... it may take some time.\n"
     	sudo apt-get update
@@ -170,7 +175,7 @@ case "$DISTRO" in
 	export PATH=$GOPATH/bin:$PATH
 	configureAndInstall |& tee -a "$LOG_FILE"
     ;;
-"rhel-7.5" | "rhel-7.6" | "rhel-8.0")
+"rhel-7.5" | "rhel-7.6" | "rhel-7.7" | "rhel-8.0")
     	printf -- "Installing %s %s for %s \n" "$PACKAGE_NAME" "$PACKAGE_VERSION" "$DISTRO" |& tee -a "$LOG_FILE"
     	printf -- "Installing dependencies... it may take some time.\n"
 	sudo yum install -y git gcc make wget |& tee -a "$LOG_FILE"
@@ -179,7 +184,7 @@ case "$DISTRO" in
 	export PATH=$GOPATH/bin:$PATH
 	configureAndInstall |& tee -a "$LOG_FILE"
     ;;
-"sles-12.4" | "sles-15")
+"sles-12.4" | "sles-15" | "sles-15.1")
     	printf -- "Installing %s %s for %s \n" "$PACKAGE_NAME" "$PACKAGE_VERSION" "$DISTRO" |& tee -a "$LOG_FILE"
     	printf -- "Installing dependencies... it may take some time.\n"
 	sudo zypper install -y git gcc make wget |& tee -a "$LOG_FILE"
