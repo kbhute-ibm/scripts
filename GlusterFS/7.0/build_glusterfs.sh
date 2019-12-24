@@ -171,7 +171,7 @@ function configureAndInstall() {
 	if [[ "${DISTRO}" == "sles-12.4" ]]; then
 		PYTHON=`which python2` ./configure --enable-gnfs --disable-events # For SLES 12 SP4
 	else
-		./configure --enable-gnfs # For RHEL, SLES 15 and Ubuntu
+		./configure --enable-gnfs # For RHEL, SLES 15 SP1 and Ubuntu
 	fi
 
     # Only for Ubuntu, SLES, and RHEL 8
@@ -200,13 +200,6 @@ function configureAndInstall() {
 	ldconfig
 	printenv >> "$LOG_FILE"
 	printf -- 'Built GlusterFS successfully \n\n' 
-
-	chmod -Rf 755 glusterfs
-    cp -Rf glusterfs "$BUILD_DIR"/glusterfs
-
-	 #Add glsuterfs to /usr/bin
-	cd "$BUILD_DIR"/glusterfs
-    cp glusterfs /usr/bin/
 
 	cd "${HOME}"
 	if [[ "$(grep LD_LIBRARY_PATH .bashrc)" ]]; then
@@ -248,7 +241,7 @@ function runTest() {
 
 		case "$DISTRO" in
         "ubuntu-16.04" | "ubuntu-18.04" | "ubuntu-19.10")
-        	apt-get install -y acl attr bc dbench dnsutils libxml2-utils net-tools nfs-common psmisc python3-pyxattr thin-provisioning-tools vim xfsprogs yajl-tools rpm2cpio gdb
+        	apt-get install -y acl attr bc dbench dnsutils libxml2-utils net-tools nfs-common psmisc python3-pyxattr thin-provisioning-tools vim xfsprogs yajl-tools rpm2cpio gdb cpio
         	;;
         
         "rhel-7.5" | "rhel-7.6" | "rhel-7.7")
@@ -263,7 +256,7 @@ function runTest() {
         	zypper install -y acl attr bc bind-utils boost-devel gcc-c++ gdb libexpat-devel libxml2-tools net-tools nfs-utils psmisc vim xfsprogs python-xattr
         	;;
         
-        "sles-15" | "sles-15.1")
+        "sles-15.1")
         	zypper install -y acl attr bc bind-utils gdb libxml2-tools net-tools-deprecated nfs-utils psmisc thin-provisioning-tools vim xfsprogs python3-xattr
         	;;
         esac
@@ -322,20 +315,17 @@ function runTest() {
         fi
         
 		# Apply 2 patches
-		cd "${CURDIR}"
+		cd "${CURDIR}/glusterfs"
 
 		# Patch test script for SLES 12 SP4 and Ubuntu 16.04
 		if [[ "${DISTRO}" == "sles-12.4" ||  "${DISTRO}" == "ubuntu-16.04" ]]; then
 			curl -o run-tests.sh.diff $REPO_URL/run-tests.sh.diff
-			patch --ignore-whitespace "${CURDIR}/glusterfs/run-tests.sh" run-tests.sh.diff
+			patch --ignore-whitespace run-tests.sh run-tests.sh.diff
 			printf -- "Patch run-tests.sh.diff success\n" 
 		fi
 
 		ssh-keygen -t rsa
 		cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
-
-		# Run the test cases
-		cd "${CURDIR}/glusterfs"
 
 		# Apply patches
 		curl -o test-patch.diff $REPO_URL/test-patch.diff
@@ -431,7 +421,7 @@ case "$DISTRO" in
 
 	;;
 
-"sles-15" | "sles-15.1")
+"sles-15.1")
 	printf -- "Installing %s %s for %s \n" "$PACKAGE_NAME" "$PACKAGE_VERSION" "$DISTRO" | tee -a "$LOG_FILE"
 	printf -- '\nInstalling dependencies \n' | tee -a "$LOG_FILE"
 	zypper install -y autoconf automake bison cmake curl flex fuse-devel gcc git glib2-devel libacl-devel libaio-devel librdmacm1 libopenssl-devel libtool liburcu-devel libuuid-devel libxml2-devel lvm2 make pkg-config python3 rdma-core-devel readline-devel zlib-devel patch gawk
