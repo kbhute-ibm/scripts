@@ -148,6 +148,7 @@ function configureAndInstall() {
 		make
 		make install
 		ldconfig /usr/local/lib64
+		export PATH=$PATH:/usr/local/bin
 	fi
 
 	# Only for RHEL 8
@@ -287,6 +288,7 @@ function runTest() {
             ./configure
             make
             make install
+	    export PATH=$PATH:/usr/local/bin
         fi
 
 		# Install thin-provisioning-tools (RHEL and SLES 12 SP4 only)
