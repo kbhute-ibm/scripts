@@ -336,7 +336,7 @@ function runTest() {
 		curl -o dbench-test-patch.diff $REPO_URL/dbench-test-patch.diff
 		git apply --ignore-whitespace dbench-test-patch.diff
 		printf -- "Patch dbench-test-patch.diff success\n" 
-
+		sudo sed -i 's/exit_on_failure="yes"/exit_on_failure="no"/' run-tests.sh
 		./run-tests.sh
 
 		# Test cases failure
