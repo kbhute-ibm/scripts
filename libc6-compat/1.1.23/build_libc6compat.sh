@@ -9,7 +9,7 @@
 set -e -o pipefail
 
 PACKAGE_NAME="libc6compat"
-PACKAGE_VERSION="1.1.23"
+PACKAGE_VERSION="1.1.24"
 SOURCE_ROOT="$(pwd)"
 
 FORCE="false"
@@ -62,7 +62,7 @@ function prepare() {
 
 function cleanup() {
     # Remove artifacts
-    rm -rf $SOURCE_ROOT/musl-1.1.23.tar.gz
+    rm -rf $SOURCE_ROOT/musl-1.1.24.tar.gz
     printf -- "Cleaned up the artifacts\n" >>"$LOG_FILE"
 }
 
@@ -72,10 +72,10 @@ function configureAndInstall() {
     #Build and install libc6-compat
 	
 	cd $SOURCE_ROOT
-	wget http://git.musl-libc.org/cgit/musl/snapshot/musl-1.1.23.tar.gz
-	tar -xzf musl-1.1.23.tar.gz
+	wget http://git.musl-libc.org/cgit/musl/snapshot/musl-1.1.24.tar.gz
+	tar -xzf musl-1.1.24.tar.gz
 	
-	cd musl-1.1.23
+	cd musl-1.1.24
 	./configure
 	make
 	sudo make install
